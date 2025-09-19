@@ -1,0 +1,8 @@
+﻿@page "/formrepresentante/edit/{Num_Empl}"
+
+<FormEmpleado Num_Empl="int.Parse(Num_Empl)"/>
+
+@code {
+    [Parameter]
+    public string Num_Empl { get; set; } = null!;
+}

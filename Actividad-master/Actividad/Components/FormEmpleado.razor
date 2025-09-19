@@ -1,0 +1,115 @@
+﻿@inject NavigationManager navigationManager
+@inject EmpleadoService empleadoService
+@inject JefeRepresentanteService jefeRepresentanteService
+@inject SucursalService sucursalService
+
+<h3>@Nombre</h3>
+
+<EditForm Model="@representante" OnValidSubmit="@Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="mt-3">
+        <label>Num. de Empleado: </label>
+        <InputNumber readonly class="form-control" @bind-Value="representante.Num_Empl" />
+        <ValidationMessage For="@(() => representante.Num_Empl)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Nombre: </label>
+        <InputText class="form-control" @bind-Value="representante.Nombre" />
+        <ValidationMessage For="@(() => representante.Nombre)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Edad: </label>
+        <InputNumber class="form-control" @bind-Value="representante.Edad" />
+        <ValidationMessage For="@(() => representante.Edad)" />
+    </div>
+    <div class="mt-3">
+        <label>Jefe de Representante: </label>
+        <InputSelect class="form-control" @bind-Value="representante.idJefe">
+            <option value="0">--Seleccione--</option>
+            @foreach(var item in listaJefes)
+            {
+                <option value="@item.idJefe">@item.nombreJefe</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => representante.idJefe)" />
+    </div>
+    <div class="mt-3">
+        <label>Sucursal: </label>
+        <InputSelect class="form-control" @bind-Value="representante.idSucursal">
+            <option value="0">--Seleccione--</option>
+            @foreach (var item in listaSucursal)
+            {
+                <option value="@item.idSucursal">@item.nombreSucursal</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => representante.idSucursal)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Cargo: </label>
+        <InputText class="form-control" @bind-Value="representante.Cargo" />
+        <ValidationMessage For="@(() => representante.Cargo)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Fecha de Contrato: </label>
+        <InputDate class="form-control" @bind-Value="representante.FechaContrato" />
+        <ValidationMessage For="@(() => representante.FechaContrato)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Cuota: </label>
+        <InputNumber class="form-control" @bind-Value="representante.Cuota" />
+        <ValidationMessage For="@(() => representante.Cuota)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Ventas: </label>
+        <InputNumber class="form-control" @bind-Value="representante.Ventas" />
+        <ValidationMessage For="@(() => representante.Ventas)" />
+    </div>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <button type="button" class="btn btn-danger" @onclick="@Regresar">Regresar</button>
+    </div>
+</EditForm>
+@code {
+    public RepresentantesVentasCLS representante { get; set; } = new RepresentantesVentasCLS();
+    [Parameter]
+    public int Num_Empl { get; set; }
+    public string Nombre { get; set; } = "";
+    public List<JefeRepresentanteCLS> listaJefes { get; set; } = new List<JefeRepresentanteCLS>();
+    public List<SucursalCLS> listaSucursal { get; set; } = new List<SucursalCLS>();
+
+    protected override Task OnInitializedAsync()
+    {
+        listaJefes = jefeRepresentanteService.listarJefes();
+        listaSucursal = sucursalService.listarSucursal();
+
+        if (Num_Empl == 0) Nombre = "Agregar Representante";
+        else
+        {
+            Nombre = "Editar Representante";
+            representante = empleadoService.recuperarRepresentantePorId(Num_Empl);
+        }
+        return base.OnInitializedAsync();
+    }
+
+    private void Guardar()
+    {
+        if(Nombre == "Agregar Representante")
+        {
+            empleadoService.guardarRepresentante(representante);
+            navigationManager.NavigateTo("registro");
+        }
+    }
+
+    private void Regresar()
+    {
+        navigationManager.NavigateTo("registro");
+    }
+}
