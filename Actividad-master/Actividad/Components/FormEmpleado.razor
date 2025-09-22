@@ -29,7 +29,7 @@
         <label>Jefe de Representante: </label>
         <InputSelect class="form-control" @bind-Value="representante.idJefe">
             <option value="0">--Seleccione--</option>
-            @foreach(var item in listaJefes)
+            @foreach (var item in listaJefes)
             {
                 <option value="@item.idJefe">@item.nombreJefe</option>
             }
@@ -42,7 +42,7 @@
             <option value="0">--Seleccione--</option>
             @foreach (var item in listaSucursal)
             {
-                <option value="@item.idSucursal">@item.nombreSucursal</option>
+                <option value="@item.idSucursal">@item.ciudad</option>
             }
         </InputSelect>
         <ValidationMessage For="@(() => representante.idSucursal)" />
@@ -83,17 +83,20 @@
     public int Num_Empl { get; set; }
     public string Nombre { get; set; } = "";
     public List<JefeRepresentanteCLS> listaJefes { get; set; } = new List<JefeRepresentanteCLS>();
-    public List<SucursalCLS> listaSucursal { get; set; } = new List<SucursalCLS>();
+    public List<SucursalListCLS> listaSucursal { get; set; } = new List<SucursalListCLS>();
 
     protected override Task OnInitializedAsync()
     {
         listaJefes = jefeRepresentanteService.listarJefes();
         listaSucursal = sucursalService.listarSucursal();
 
-        if (Num_Empl == 0) Nombre = "Agregar Representante";
+        if (Num_Empl == 0)
+        {
+            Nombre = "Agregar Representante";
+        }
         else
         {
-            Nombre = "Editar Representante";
+            Nombre = "Editar Representante: " + representante.Nombre;
             representante = empleadoService.recuperarRepresentantePorId(Num_Empl);
         }
         return base.OnInitializedAsync();
@@ -101,11 +104,8 @@
 
     private void Guardar()
     {
-        if(Nombre == "Agregar Representante")
-        {
-            empleadoService.guardarRepresentante(representante);
-            navigationManager.NavigateTo("registro");
-        }
+        empleadoService.guardarRepresentante(representante);
+        navigationManager.NavigateTo("registro");
     }
 
     private void Regresar()

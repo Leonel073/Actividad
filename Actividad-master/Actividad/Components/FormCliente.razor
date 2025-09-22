@@ -1,0 +1,75 @@
+﻿@inject NavigationManager navigationManager
+@inject ClienteService clienteService
+@inject EmpleadoService empleadoService
+
+<h3>@NombreCliente</h3>
+
+<EditForm Model="@cliente" OnValidSubmit="@Guardar">
+    <DataAnnotationsValidator/>
+
+    <div class="mt-3">
+        <label>Codigo de Cliente: </label>
+        <InputNumber readonly class="form-control" @bind-Value="cliente.CodigoCliente" />
+        <ValidationMessage For="@(() => cliente.CodigoCliente)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Nombre de Cliente: </label>
+        <InputText class="form-control" @bind-Value="cliente.NombreCliente" />
+        <ValidationMessage For="@(() => cliente.NombreCliente)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Representante de Ventas Asignado: </label>
+        <InputSelect class="form-control" @bind-Value="cliente.Num_Empl">
+            <option value="0">--Seleccione--</option>
+            @foreach (var item in listaRepresentantes)
+            {
+                <option value="@item.Num_Empl">@item.Nombre</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => cliente.Num_Empl)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Limite de Creditos: </label>
+        <InputNumber class="form-control" @bind-Value="cliente.LimiteCredito" />
+        <ValidationMessage For="@(() => cliente.LimiteCredito)" />
+    </div>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <button type="button" class="btn btn-danger" @onclick="@Regresar">Regresar</button>
+    </div>
+</EditForm>
+@code {
+    public ClienteCLS cliente { get; set; } = new ClienteCLS();
+    [Parameter]
+    public int CodigoCliente { get; set; }
+    public string NombreCliente { get; set; } = "";
+    public List<RepresentanteListCLS> listaRepresentantes { get; set; } = new List<RepresentanteListCLS>();
+
+    protected override Task OnInitializedAsync()
+    {
+        listaRepresentantes = empleadoService.listarRepresentantes();
+
+        if (CodigoCliente == 0) NombreCliente = "Agregar Cliente";
+        else
+        {
+            NombreCliente = "Editar Cliente";
+            cliente = clienteService.recuperarClientePorId(CodigoCliente);
+        }
+        return base.OnInitializedAsync();
+    }
+
+    private void Guardar()
+    {
+        clienteService.guardarCliente(cliente);
+        navigationManager.NavigateTo("clientes");
+    }
+
+    private void Regresar()
+    {
+        navigationManager.NavigateTo("clientes");
+    }
+}

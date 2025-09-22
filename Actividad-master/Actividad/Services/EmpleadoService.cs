@@ -1,4 +1,8 @@
 ﻿using Actividad.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Actividad.Services
 {
@@ -16,24 +20,36 @@ namespace Actividad.Services
 
         private List<RepresentanteListCLS> lista;
         private JefeRepresentanteService jefeService;
-        private SucursalService sucursalService;
-        public EmpleadoService()
+        private readonly Lazy<SucursalService> sucursalServiceLazy;
+
+        public EmpleadoService(Lazy<SucursalService> _sucursalServiceLazy)
         {
             jefeService = new JefeRepresentanteService();
-            sucursalService = new SucursalService();
-            lista = new List<RepresentanteListCLS>();
-            lista.Add(new RepresentanteListCLS { Num_Empl = 1, Nombre = "Empleado 1", nombreJefe = "Rudy", nombreSucursal = "Cochabamba" });
-            lista.Add(new RepresentanteListCLS { Num_Empl = 2, Nombre = "Empleado 2",nombreJefe = "Oscar" , nombreSucursal = "La Paz"});
+            sucursalServiceLazy = _sucursalServiceLazy;
+
+            lista = new List<RepresentanteListCLS>
+            {
+                new RepresentanteListCLS { Num_Empl = 1, Nombre = "Juan", nombreJefe = "Charly", ciudad = "Santa Cruz", Cargo = "Director", Edad = 40, FechaContrato = DateTime.Now, Cuota = 1000, Ventas = 800 },
+                new RepresentanteListCLS { Num_Empl = 2, Nombre = "Pablo", nombreJefe = "Miguel", ciudad = "La Paz", Cargo = "Empleado", Edad = 30, FechaContrato = DateTime.Now, Cuota = 500, Ventas = 400 },
+                new RepresentanteListCLS { Num_Empl = 3, Nombre = "Ana", nombreJefe = "Jose", ciudad = "La Paz", Cargo = "Director", Edad = 45, FechaContrato = DateTime.Now, Cuota = 1200, Ventas = 1000 },
+                
+            };
         }
+
         public List<RepresentanteListCLS> listarRepresentantes()
         {
-            return lista;
+            return lista; // Devuelve TODOS los empleados para la página de representantes
+        }
+
+        public List<RepresentanteListCLS> ListarDirectores()
+        {
+            return lista.Where(p => p.Cargo == "Director").ToList(); // Devuelve solo directores para sucursales
         }
 
         public List<RepresentanteListCLS> filtrarRepresentantes(string nombrerepresentante)
         {
             List<RepresentanteListCLS> l = listarRepresentantes();
-            if(nombrerepresentante == "")
+            if (string.IsNullOrEmpty(nombrerepresentante))
             {
                 return l;
             }
@@ -52,13 +68,21 @@ namespace Actividad.Services
 
         public RepresentantesVentasCLS recuperarRepresentantePorId(int Num_Empl)
         {
-            var obj = lista.Where(p => p.Num_Empl == Num_Empl).FirstOrDefault();
+            var obj = lista.FirstOrDefault(p => p.Num_Empl == Num_Empl);
             if (obj != null)
             {
-                return new RepresentantesVentasCLS { Num_Empl = obj.Num_Empl, Nombre = obj.Nombre, Cargo = obj.Cargo,
-                    Edad = obj.Edad, FechaContrato = obj.FechaContrato, Cuota = obj.Cuota, Ventas = obj.Ventas,
+                return new RepresentantesVentasCLS
+                {
+                    Num_Empl = obj.Num_Empl,
+                    Nombre = obj.Nombre,
+                    Cargo = obj.Cargo,
+                    Edad = obj.Edad,
+                    FechaContrato = obj.FechaContrato,
+                    Cuota = obj.Cuota,
+                    Ventas = obj.Ventas,
                     idJefe = jefeService.obtenerIdJefe(obj.nombreJefe),
-                    idSucursal = sucursalService.obtenerIdSucursal(obj.nombreSucursal)};
+                    idSucursal = sucursalServiceLazy.Value.obtenerIdSucursal(obj.ciudad)
+                };
             }
             else
             {
@@ -66,14 +90,51 @@ namespace Actividad.Services
             }
         }
 
+        public int obtenerIdEmpleado(string Nombre)
+        {
+            var obj = lista.FirstOrDefault(p => p.Nombre == Nombre);
+            return obj?.Num_Empl ?? 0;
+        }
+
+        public string obtenerNombreEmpleado(int Num_Empl)
+        {
+            var obj = lista.FirstOrDefault(p => p.Num_Empl == Num_Empl);
+            return obj?.Nombre ?? "";
+        }
+
         public void guardarRepresentante(RepresentantesVentasCLS representante)
         {
-            int Num_Empl = lista.Select(p => p.Num_Empl).Max() + 1;
-            lista.Add(new RepresentanteListCLS { Num_Empl = Num_Empl, Nombre = representante.Nombre,
-                Edad = representante.Edad, Cargo = representante.Cargo, FechaContrato = representante.FechaContrato, 
-                Cuota = representante.Cuota, Ventas = representante.Ventas,
-                nombreJefe = jefeService.obtenerNombreJefe(representante.idJefe),
-                nombreSucursal = sucursalService.obtenerNombreSucursal(representante.idSucursal)});
+            if (representante.Num_Empl == 0)
+            {
+                int Num_Empl = lista.Any() ? lista.Max(p => p.Num_Empl) + 1 : 1;
+                lista.Add(new RepresentanteListCLS
+                {
+                    Num_Empl = Num_Empl,
+                    Nombre = representante.Nombre,
+                    Edad = representante.Edad,
+                    Cargo = representante.Cargo,
+                    FechaContrato = representante.FechaContrato,
+                    Cuota = representante.Cuota,
+                    Ventas = representante.Ventas,
+                    nombreJefe = jefeService.obtenerNombreJefe(representante.idJefe),
+                    ciudad = sucursalServiceLazy.Value.obtenerNombreSucursal(representante.idSucursal)
+                });
+            }
+            else
+            {
+                var obj = lista.FirstOrDefault(p => p.Num_Empl == representante.Num_Empl);
+                if (obj != null)
+                {
+                    obj.Nombre = representante.Nombre;
+                    obj.Edad = representante.Edad;
+                    obj.Cargo = representante.Cargo;
+                    obj.FechaContrato = representante.FechaContrato;
+                    obj.Cuota = representante.Cuota;
+                    obj.Ventas = representante.Ventas;
+                    obj.nombreJefe = jefeService.obtenerNombreJefe(representante.idJefe);
+                    obj.ciudad = sucursalServiceLazy.Value.obtenerNombreSucursal(representante.idSucursal);
+                }
+            }
         }
     }
 }

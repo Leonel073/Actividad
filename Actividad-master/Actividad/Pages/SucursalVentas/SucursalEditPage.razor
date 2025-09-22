@@ -1,0 +1,8 @@
+﻿@page "/formsucursal/edit/{idSucursal}"
+
+<FormSucursal idSucursal="int.Parse(idSucursal)" />
+
+@code {
+    [Parameter]
+    public string idSucursal { get; set; } = null!;
+}

@@ -16,7 +16,7 @@ namespace Actividad.Entities
         public double Cuota { get; set; }
         public int Ventas { get; set; }
         public string nombreJefe { get; set; } = string.Empty;
-        public string nombreSucursal { get; set; } = string.Empty;
+        public string ciudad { get; set; } = string.Empty;
 
     }
 }

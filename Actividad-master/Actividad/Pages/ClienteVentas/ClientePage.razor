@@ -1,39 +1,36 @@
-﻿@page "/registro"
+﻿@page "/clientes"
 @inject NavigationManager navigationManager
-@inject EmpleadoService empleadoService
-
+@inject ClienteService clienteService
 
 <button @onclick="nuevo" class="btn-primary">Nuevo</button>
 
-<SearchRepresentante/>
+<SearchCliente />
 
 @if (lista != null && lista.Count != 0)
 {
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Jefe</th>
-                <th>Sucursal</th>
-                <th>Operaciones</th>
+                <th>Codigo Cliente</th>
+                <th>Nombre Cliente</th>
+                <th>Representante Asignado</th>
+                <th>Limite de Creditos</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in lista)
             {
                 <tr>
-                    <td>@item.Num_Empl</td>
-                    <td>@item.Nombre</td>
-                    <td>@item.nombreJefe</td>
-                    <td>@item.ciudad</td>
+                    <td>@item.CodigoCliente</td>
+                    <td>@item.NombreCliente</td>
+                    <td>@item.RepresentanteAsignado</td>
                     <td>
-                        <button class="btn btn-primary" @onclick="(() => recuperarEmpleado(item.Num_Empl))">
+                        <button class="btn btn-primary" @onclick="(() => recuperarCliente(item.CodigoCliente))">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen-fill" viewBox="0 0 16 16">
                                 <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001" />
                             </svg>
                         </button>
-                        <button class="btn btn-danger" @onclick="(() => eliminarEmpleado(item.Num_Empl))">
+                        <button class="btn btn-danger" @onclick="(() => eliminarCliente(item.CodigoCliente))">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                 <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
                                 <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
@@ -47,40 +44,40 @@
 }
 
 @code {
-    public List<RepresentanteListCLS> lista { get; set; } = new List<RepresentanteListCLS>();
+    public List<ClienteListCLS> lista { get; set; } = new List<ClienteListCLS>();
     protected override Task OnInitializedAsync()
     {
-        empleadoService.OnSearch += filtrar;
+        clienteService.OnSearch += filtrar;
 
-        listarEmpleados();
+        listarClientes();
         return base.OnInitializedAsync();
     }
 
-    private Task filtrar(string nombre)
+    private Task filtrar(string nombreCliente)
     {
-        lista = empleadoService.filtrarRepresentantes(nombre);
+        lista = clienteService.filtrarClientes(nombreCliente);
         StateHasChanged();
         return Task.CompletedTask;
     }
 
-    private void listarEmpleados()
+    private void listarClientes()
     {
-        lista = empleadoService.listarRepresentantes();
+        lista = clienteService.listarClientes();
     }
 
     private void nuevo()
     {
-        navigationManager.NavigateTo("/formrepresentante");
+        navigationManager.NavigateTo("/formcliente");
     }
 
-    private void recuperarEmpleado(int Num_Empl)
+    private void recuperarCliente(int CodigoCliente)
     {
-        navigationManager.NavigateTo("/formrepresentante/edit/" + Num_Empl);
+        navigationManager.NavigateTo("/formcliente/edit/" + CodigoCliente);
     }
 
-    private void eliminarEmpleado(int Num_Empl)
+    private void eliminarCliente(int CodigoCliente)
     {
-        empleadoService.eliminarEmpleado(Num_Empl);
-        listarEmpleados();
+        clienteService.eliminarCliente(CodigoCliente);
+        listarClientes();
     }
 }

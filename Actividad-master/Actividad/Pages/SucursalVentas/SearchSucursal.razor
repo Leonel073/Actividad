@@ -1,0 +1,25 @@
+﻿@inject SucursalService sucursalService
+
+<div class="input-group mb-3 mt-3">
+    <input type="text" class="form-control" placeholder="Ingrese ciudad de Sucursal"
+           aria-label="Recipient’s username with two button addons"
+           @bind-value="ciudad"
+           @bind-value:event="oninput">
+    <button @onclick="buscar" class="btn btn-outline-dark" type="button">Buscar</button>
+    <button @onclick="limpiar" class="btn btn-outline-danger" type="button">Limpiar</button>
+</div>
+
+@code {
+    private async Task limpiar()
+    {
+        ciudad = string.Empty;
+        await sucursalService.notificarBusqueda(ciudad);
+    }
+
+    public string ciudad { get; set; } = string.Empty;
+
+    private async Task buscar()
+    {
+        await sucursalService.notificarBusqueda(ciudad);
+    }
+}

@@ -1,0 +1,8 @@
+﻿@page "/formcliente/edit/{CodigoCliente}"
+
+<FormCliente CodigoCliente="int.Parse(CodigoCliente)" />
+
+@code {
+    [Parameter]
+    public string CodigoCliente { get; set; } = null!;
+}

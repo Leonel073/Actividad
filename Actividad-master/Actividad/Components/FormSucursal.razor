@@ -1,0 +1,87 @@
+﻿@inject NavigationManager navigationManager
+@inject SucursalService sucursalService
+@inject EmpleadoService empleadoService
+
+<h3>@Ciudad</h3>
+
+<EditForm Model="@sucursal" OnValidSubmit="@Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="mt-3">
+        <label>Codigo de Sucursal: </label>
+        <InputNumber readonly class="form-control" @bind-Value="sucursal.idSucursal" />
+        <ValidationMessage For="@(() => sucursal.idSucursal)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Ciudad: </label>
+        <InputText class="form-control" @bind-Value="sucursal.ciudad" />
+        <ValidationMessage For="@(() => sucursal.ciudad)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Region: </label>
+        <InputText class="form-control" @bind-Value="sucursal.Region" />
+        <ValidationMessage For="@(() => sucursal.Region)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Director Asignado: </label>
+        <InputSelect class="form-control" @bind-Value="sucursal.Num_Empl">
+            <option value="0">--Seleccione--</option>
+            @foreach (var item in listaRepresentantes)
+            {
+                <option value="@item.Num_Empl">@item.Nombre</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => sucursal.Num_Empl)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Objetivos de Ventas: </label>
+        <InputText class="form-control" @bind-Value="sucursal.ObjetivoVenta" />
+        <ValidationMessage For="@(() => sucursal.ObjetivoVenta)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Ventas Reales: </label>
+        <InputNumber class="form-control" @bind-Value="sucursal.VentasReales" />
+        <ValidationMessage For="@(() => sucursal.VentasReales)" />
+    </div>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <button type="button" class="btn btn-danger" @onclick="@Regresar">Regresar</button>
+    </div>
+</EditForm>
+@code {
+    public SucursalCLS sucursal { get; set; } = new SucursalCLS();
+    [Parameter]
+    public int idSucursal { get; set; }
+    public string Ciudad { get; set; } = "";
+    public List<RepresentanteListCLS> listaRepresentantes { get; set; } = new List<RepresentanteListCLS>();
+
+    protected override Task OnInitializedAsync()
+    {
+        listaRepresentantes = sucursalService.ObtenerDirectores();
+
+        if (idSucursal == 0) Ciudad = "Agregar Sucursal";
+        else
+        {
+            Ciudad = "Editar Sucursal";
+            sucursal = sucursalService.recuperarSucursalPorId(idSucursal);
+        }
+        return base.OnInitializedAsync();
+    }
+
+    private void Guardar()
+    {
+        sucursalService.guardarSucursal(sucursal);
+        navigationManager.NavigateTo("sucursales");
+    }
+
+    private void Regresar()
+    {
+        navigationManager.NavigateTo("sucursales");
+    }
+}
