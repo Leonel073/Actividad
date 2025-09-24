@@ -29,10 +29,11 @@ namespace Actividad.Services
 
             lista = new List<RepresentanteListCLS>
             {
+
                 new RepresentanteListCLS { Num_Empl = 1, Nombre = "Juan", nombreJefe = "Charly", ciudad = "Santa Cruz", Cargo = "Director", Edad = 40, FechaContrato = DateTime.Now, Cuota = 1000, Ventas = 800 },
                 new RepresentanteListCLS { Num_Empl = 2, Nombre = "Pablo", nombreJefe = "Miguel", ciudad = "La Paz", Cargo = "Empleado", Edad = 30, FechaContrato = DateTime.Now, Cuota = 500, Ventas = 400 },
                 new RepresentanteListCLS { Num_Empl = 3, Nombre = "Ana", nombreJefe = "Jose", ciudad = "La Paz", Cargo = "Director", Edad = 45, FechaContrato = DateTime.Now, Cuota = 1200, Ventas = 1000 },
-                
+
             };
         }
 

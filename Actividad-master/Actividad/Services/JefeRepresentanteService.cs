@@ -8,9 +8,8 @@ namespace Actividad.Services
         public JefeRepresentanteService()
         {
             lista = new List<JefeRepresentanteCLS>();
-            lista.Add(new JefeRepresentanteCLS() { idJefe = 1, nombreJefe = "Sebastian" });
-            lista.Add(new JefeRepresentanteCLS() { idJefe = 2, nombreJefe = "Miguel" });
-            lista.Add(new JefeRepresentanteCLS() { idJefe = 3, nombreJefe = "Charly" });
+            lista.Add(new JefeRepresentanteCLS() { idJefe = 1, nombreJefe = "Rudy" });
+            lista.Add(new JefeRepresentanteCLS() { idJefe = 2, nombreJefe = "Hernan" });
         }
         public List<JefeRepresentanteCLS> listarJefes()
         {
