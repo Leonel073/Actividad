@@ -22,8 +22,8 @@ namespace Actividad.Services
             empleadoService = _empleadoService;
 
             lista = new List<ClienteListCLS>();
-            lista.Add(new ClienteListCLS { CodigoCliente = 1, NombreCliente = "Alexis", RepresentanteAsignado = "Miguel" });
-            lista.Add(new ClienteListCLS { CodigoCliente = 2, NombreCliente = "Charly", RepresentanteAsignado = "Sebastian" });
+            lista.Add(new ClienteListCLS { CodigoCliente = 1, NombreCliente = "Pablo", RepresentanteAsignado = "Ana" });
+            lista.Add(new ClienteListCLS { CodigoCliente = 2, NombreCliente = "Esteban", RepresentanteAsignado = "Juan" });
         }
         public List<ClienteListCLS> listarClientes()
         {

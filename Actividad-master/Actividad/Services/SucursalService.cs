@@ -22,12 +22,9 @@ namespace Actividad.Services
             empleadoService = _empleadoService;
 
             lista = new List<SucursalListCLS>();
-            lista.Add(new SucursalListCLS() { idSucursal = 1, ciudad = "La Paz" ,Region = "America", Director = "Sebastian"});
-            lista.Add(new SucursalListCLS() { idSucursal = 2, ciudad = "Santa Cruz", Region = "America", Director = "Sebastian" });
-            lista.Add(new SucursalListCLS() { idSucursal = 3, ciudad = "Cochabamba", Region = "America", Director = "Sebastian" });
-            lista.Add(new SucursalListCLS() { idSucursal = 4, ciudad = "Sucre", Region = "America", Director = "Sebastian" });
-            lista.Add(new SucursalListCLS() { idSucursal = 5, ciudad = "Toronto", Region = "America", Director = "Sebastian" });
-            lista.Add(new SucursalListCLS() { idSucursal = 6, ciudad = "Tokio", Region = "Asia", Director = "Sebastian" });
+            lista.Add(new SucursalListCLS() { idSucursal = 1, ciudad = "La Paz" ,Region = "Bolivia", Director = "Juan"});
+            lista.Add(new SucursalListCLS() { idSucursal = 2, ciudad = "Santa Cruz", Region = "Bolivia", Director = "Ana" });
+            lista.Add(new SucursalListCLS() { idSucursal = 3, ciudad = "Cochabamba", Region = "Bolivia", Director = "Juan" });
         }
         public List<SucursalListCLS> listarSucursal()
         {
